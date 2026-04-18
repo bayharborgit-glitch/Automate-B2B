@@ -1,7 +1,7 @@
-from contextlib import asynccontextmanager
+﻿from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from app.database import Base, engine
-from app.routes import orders  # <--- ADD THIS LINE
+from app.routes import orders
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -17,7 +17,7 @@ app = FastAPI(
 )
 
 # Include routers
-app.include_router(orders.router)  # <--- ADD THIS LINE
+app.include_router(orders.router)
 
 @app.get("/")
 def root():
