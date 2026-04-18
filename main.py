@@ -1,11 +1,10 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from app.database import Base, engine
+from app.routes import orders  # <--- ADD THIS LINE
 
-# Lifespan: Run this code when the server starts up
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Create database tables on startup
     Base.metadata.create_all(bind=engine)
     print("✅ Database tables created successfully.")
     yield
@@ -16,6 +15,9 @@ app = FastAPI(
     version="1.0.0",
     lifespan=lifespan
 )
+
+# Include routers
+app.include_router(orders.router)  # <--- ADD THIS LINE
 
 @app.get("/")
 def root():
