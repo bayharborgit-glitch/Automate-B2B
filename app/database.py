@@ -1,23 +1,35 @@
+# app/database.py
+# Minimal FastAPI + SQLAlchemy database setup - NO optional imports
+
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, declarative_base
+import os
 
-SQLALCHEMY_DATABASE_URL = "sqlite:///./bizlink.db"
+# 1. Database URL
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./bizlink.db")
 
-engine = create_engine(
-    SQLALCHEMY_DATABASE_URL,
-    connect_args={"check_same_thread": False}
-)
+# 2. SQLite-specific connect args
+if DATABASE_URL.startswith("sqlite"):
+    connect_args = {"check_same_thread": False}
+else:
+    connect_args = {}
 
+# 3. Create engine
+engine = create_engine(DATABASE_URL, connect_args=connect_args, echo=False)
+
+# 4. Session factory
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
+# 5. Base for models
 Base = declarative_base()
 
-# Import all models
-from app.models import order, error_log, manual_review, refund  # ← refund must be here
+# 6. ✅ THE FUNCTION FASTAPI NEEDS - must be at module level, no nesting
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
-# Create tables
-def create_tables():
-    Base.metadata.create_all(bind=engine)
-
-create_tables()
+# 7. Debug print - confirms file is loaded
+print(f"🔧 database.py loaded | get_db defined: {callable(get_db)}")
