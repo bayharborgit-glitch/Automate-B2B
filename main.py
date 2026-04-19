@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+
 from app.database import engine, Base
 from app.routes import orders
 
@@ -13,6 +14,14 @@ app = FastAPI(
 
 # Include routers
 app.include_router(orders.router)
+
+
+app = FastAPI(
+    title="BizLink B2B Workflow Automation",
+    description="Backend API for BizLink platform - CSE 314 Group 3",
+    version="1.0.0"
+)
+
 
 @app.get("/")
 def root():
