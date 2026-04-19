@@ -14,7 +14,7 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 # Import all models
-from app.models import order, error_log, manual_review
+from app.models import order, error_log, manual_review, refund  # ← refund must be here
 
 # Create tables
 def create_tables():
