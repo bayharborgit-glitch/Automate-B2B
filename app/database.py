@@ -13,5 +13,11 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
 
-# Import models
-from app.models import order
+# Import all models
+from app.models import order, error_log, manual_review
+
+# Create tables
+def create_tables():
+    Base.metadata.create_all(bind=engine)
+
+create_tables()
