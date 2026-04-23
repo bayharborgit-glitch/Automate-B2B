@@ -1,9 +1,19 @@
-from sqlalchemy import Column, Integer, String, Float, DateTime, Enum
-from sqlalchemy.sql import func
-from app.database import Base
-import enum
+# app/models/order.py
+from sqlalchemy import Column, Integer, String, Float, DateTime, Enum as SAEnum
+from sqlalchemy.orm import relationship
+from datetime import datetime
+from enum import Enum as PyEnum
 
-class OrderStatus(str, enum.Enum):
+# ✅ CRITICAL: Import Base from database.py
+from app.database import Base
+
+class PaymentStatus(str, PyEnum):
+    pending = "pending"
+    paid = "paid"
+    failed = "failed"
+    refunded = "refunded"
+
+class WorkflowStatus(str, PyEnum):
     received = "received"
     processing = "processing"
     notified = "notified"
@@ -21,6 +31,11 @@ class Order(Base):
     product_details = Column(String, nullable=False)
     quantity = Column(Integer, nullable=False)
     total_price = Column(Float, nullable=False)
-    payment_status = Column(String, default="pending")
-    workflow_status = Column(Enum(OrderStatus), default=OrderStatus.received)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    payment_method = Column(String, nullable=False)  # ← This was missing!
+    payment_status = Column(SAEnum(PaymentStatus), default=PaymentStatus.pending)
+    workflow_status = Column(SAEnum(WorkflowStatus), default=WorkflowStatus.received)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relationship to Refund
+    refunds = relationship("Refund", back_populates="order", cascade="all, delete-orphan")
