@@ -3,5 +3,6 @@ from .refund import Refund
 from .error_log import ErrorLog
 from .manual_review import ManualReview
 from .scheduled_email import ScheduledEmail  # ← ADD THIS
+from .lead import Lead
 
-__all__ = ["Order", "Refund", "ErrorLog", "ManualReview", "ScheduledEmail"]
+__all__ = ["Order", "Refund", "ErrorLog", "ManualReview", "ScheduledEmail", "Lead"]
